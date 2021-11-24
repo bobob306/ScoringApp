@@ -40,8 +40,18 @@ class PlayerViewModel(private val playerDao: PlayerDao) : ViewModel() {
 
     var numberOfRounds = 0
 
+    private val _firstPlayerId = MutableLiveData<Int>()
+    val firstPlayerId: LiveData<Int> = _firstPlayerId
+
+    private val _lastPlayerId = MutableLiveData<Int>()
+    val lastPlayerId: LiveData<Int> = _lastPlayerId
+
+    /*
+    No need for this line anymore
     var roundNumberStrings: String =
         "Round number ${_roundNumber.value?.get(numberOfRounds) ?: 0} of ${_roundNumber.value?.last() ?: 0}"
+
+     */
 
     private fun insertPlayer(player: Player) {
         viewModelScope.launch {
@@ -57,6 +67,23 @@ class PlayerViewModel(private val playerDao: PlayerDao) : ViewModel() {
         val newPlayer = getNewPlayerEntry(playerName)
         insertPlayer(newPlayer)
     }
+
+    fun setLastPlayer() {
+        val numberOfPlayers = allPlayers.value!!.size - 1
+
+        _firstPlayerId.value = if (_firstPlayerId.value!! > numberOfPlayers) {
+            0
+        } else {
+            _firstPlayerId.value
+        }
+
+        _lastPlayerId.value = ((firstPlayerId.value!!) - 1)
+        if (_firstPlayerId.value == 0) {
+            _lastPlayerId.value = numberOfPlayers
+        }
+        updateTVs()
+    }
+
 
     private fun getNewPlayerEntry(playerName: String): Player {
         return Player(
@@ -74,53 +101,51 @@ class PlayerViewModel(private val playerDao: PlayerDao) : ViewModel() {
             "Round number ${_roundNumber.value?.get(roundCounter.value ?: 0) ?: 0} of ${_roundNumber.value?.last() ?: 0}"
     }
 
+    private fun updateTVs() {
+        _firstPlayerId.value = firstPlayerId.value
+        _lastPlayerId.value = lastPlayerId.value
+    }
+
     fun nextState() {
         numberOfRounds++
         when (_state.value) {
             "SetPlayers" -> {
-                Log.d("state", _state.value.toString())
                 _state.value = "TakeBid"
-                Log.d("state", _state.value.toString())
                 numberOfRounds = allPlayers.value?.size ?: 0
                 _roundCounter.value = 0
+                _firstPlayerId.value = 0
                 createRounds()
                 createTrickList()
-                Log.d("Round Number", _roundNumber.value?.get(_roundCounter.value!!).toString())
-                Log.d("Last Round Number", _roundNumber.value?.last().toString())
-                Log.d("Total Tricks", _totalTricks.value?.get(_roundCounter.value!!).toString())
-                Log.d("RNS", roundNumberString.value.toString())
+                setLastPlayer()
+                updateRoundString()
+                Log.d(
+                    "last player",
+                    allPlayers.value?.get(lastPlayerId.value ?: 0)?.playerName.toString()
+                )
+                Log.d(
+                    "first player",
+                    allPlayers.value?.get(firstPlayerId.value ?: 0)?.playerName.toString()
+                )
 
             }
             "TakeBid" -> {
-                _roundCounter.value = _roundCounter.value!!.plus(1)
-                updateRoundString()
-                Log.d("state", _state.value.toString())
                 _state.value = "TakeTricks"
-                Log.d("state", _state.value.toString())
-                Log.d("state", _roundCounter.value.toString())
-                Log.d("Round Number", _roundNumber.value?.get(_roundCounter.value!!).toString())
-                Log.d("Last Round Number", _roundNumber.value?.last().toString())
-                Log.d("Total Tricks", _totalTricks.value?.get(_roundCounter.value!!).toString())
-                Log.d(
-                    "RNS",
-                    "Round number ${_roundNumber.value?.get(roundCounter.value ?: 0) ?: 0} of ${_roundNumber.value?.last() ?: 0}"
-                )
-                Log.d("RNS", _roundNumberString.value.toString())
             }
             "TakeTricks" -> {
                 updateRoundString()
-                Log.d("state", _state.value.toString())
                 _state.value = "TakeBid"
-                Log.d("state", _state.value.toString())
-                Log.d("state", _roundCounter.value.toString())
-                Log.d("Round Number", _roundNumber.value?.get(_roundCounter.value!!).toString())
-                Log.d("Last Round Number", _roundNumber.value?.last().toString())
-                Log.d("Total Tricks", _totalTricks.value?.get(_roundCounter.value!!).toString())
+                _firstPlayerId.value = _firstPlayerId.value!!.plus(1)
+                _roundCounter.value = _roundCounter.value!!.plus(1)
+                setLastPlayer()
+                updateRoundString()
                 Log.d(
-                    "RNS",
-                    "Round number ${_roundNumber.value?.get(roundCounter.value ?: 0) ?: 0} of ${_roundNumber.value?.last() ?: 0}"
+                    "last player",
+                    allPlayers.value?.get(lastPlayerId.value ?: 0)?.playerName.toString()
                 )
-                Log.d("RNS", _roundNumberString.value.toString())
+                Log.d(
+                    "first player",
+                    allPlayers.value?.get(firstPlayerId.value ?: 0)?.playerName.toString()
+                )
             }
         }
     }
@@ -155,7 +180,8 @@ class PlayerViewModel(private val playerDao: PlayerDao) : ViewModel() {
             trickList.add(8)
         }
         _totalTricks.value = trickList
-        _roundNumberString.value = ("Round number ${_roundNumber.value?.get(roundCounter.value ?: 0) ?: 0} of ${_roundNumber.value?.last() ?: 0}")
+        _roundNumberString.value =
+            ("Round number ${_roundNumber.value?.get(roundCounter.value ?: 0) ?: 0} of ${_roundNumber.value?.last() ?: 0}")
     }
 
 

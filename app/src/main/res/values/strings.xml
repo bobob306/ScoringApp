@@ -4,4 +4,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="player_names">Player name %1s</string>
     <string name="Round_number">Round number of </string>
+    <string name="first_player">First player: %s</string>
+    <string name="last_player">Last player: %s</string>
 </resources>
