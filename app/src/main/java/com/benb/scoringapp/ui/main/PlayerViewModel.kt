@@ -4,10 +4,7 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.benb.scoringapp.data.player.Player
 import com.benb.scoringapp.data.player.PlayerDao
-import com.benb.scoringapp.data.score.Score
-import com.benb.scoringapp.databinding.MainFragmentBinding
 import kotlinx.coroutines.launch
-import java.lang.IllegalArgumentException
 
 class PlayerViewModel(private val playerDao: PlayerDao) : ViewModel() {
 
@@ -31,11 +28,11 @@ class PlayerViewModel(private val playerDao: PlayerDao) : ViewModel() {
     val starter: LiveData<MutableList<Int>>
         get() = _starter
 
-    private val _roundNumberString = MutableLiveData<String>("Round number ${_roundNumber.value?.get(roundCounter.value ?: 0) ?: 0} of ${_roundNumber.value?.last() ?: 0}")
+    private val _roundNumberString = MutableLiveData<String>()
     val roundNumberString: LiveData<String>
         get() = _roundNumberString
 
-    private val _roundCounter = MutableLiveData<Int>(0)
+    private val _roundCounter = MutableLiveData<Int>()
     val roundCounter: LiveData<Int>
         get() = _roundCounter
 
@@ -72,8 +69,12 @@ class PlayerViewModel(private val playerDao: PlayerDao) : ViewModel() {
         return playerNameList
     }
 
+    private fun updateRoundString() {
+        _roundNumberString.value =
+            "Round number ${_roundNumber.value?.get(roundCounter.value ?: 0) ?: 0} of ${_roundNumber.value?.last() ?: 0}"
+    }
+
     fun nextState() {
-        _roundCounter.value?.plus(1) ?: 0
         numberOfRounds++
         when (_state.value) {
             "SetPlayers" -> {
@@ -81,24 +82,45 @@ class PlayerViewModel(private val playerDao: PlayerDao) : ViewModel() {
                 _state.value = "TakeBid"
                 Log.d("state", _state.value.toString())
                 numberOfRounds = allPlayers.value?.size ?: 0
-                _roundCounter.value?.equals(0) ?: 0
+                _roundCounter.value = 0
                 createRounds()
                 createTrickList()
-                Log.d("Round Number", _roundNumber.value?.get(0).toString())
+                Log.d("Round Number", _roundNumber.value?.get(_roundCounter.value!!).toString())
                 Log.d("Last Round Number", _roundNumber.value?.last().toString())
-                Log.d("Total Tricks", _totalTricks.value?.get(0).toString())
+                Log.d("Total Tricks", _totalTricks.value?.get(_roundCounter.value!!).toString())
                 Log.d("RNS", roundNumberString.value.toString())
 
             }
             "TakeBid" -> {
+                _roundCounter.value = _roundCounter.value!!.plus(1)
+                updateRoundString()
                 Log.d("state", _state.value.toString())
                 _state.value = "TakeTricks"
                 Log.d("state", _state.value.toString())
+                Log.d("state", _roundCounter.value.toString())
+                Log.d("Round Number", _roundNumber.value?.get(_roundCounter.value!!).toString())
+                Log.d("Last Round Number", _roundNumber.value?.last().toString())
+                Log.d("Total Tricks", _totalTricks.value?.get(_roundCounter.value!!).toString())
+                Log.d(
+                    "RNS",
+                    "Round number ${_roundNumber.value?.get(roundCounter.value ?: 0) ?: 0} of ${_roundNumber.value?.last() ?: 0}"
+                )
+                Log.d("RNS", _roundNumberString.value.toString())
             }
             "TakeTricks" -> {
+                updateRoundString()
                 Log.d("state", _state.value.toString())
                 _state.value = "TakeBid"
                 Log.d("state", _state.value.toString())
+                Log.d("state", _roundCounter.value.toString())
+                Log.d("Round Number", _roundNumber.value?.get(_roundCounter.value!!).toString())
+                Log.d("Last Round Number", _roundNumber.value?.last().toString())
+                Log.d("Total Tricks", _totalTricks.value?.get(_roundCounter.value!!).toString())
+                Log.d(
+                    "RNS",
+                    "Round number ${_roundNumber.value?.get(roundCounter.value ?: 0) ?: 0} of ${_roundNumber.value?.last() ?: 0}"
+                )
+                Log.d("RNS", _roundNumberString.value.toString())
             }
         }
     }

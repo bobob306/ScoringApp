@@ -1,11 +1,11 @@
 package com.benb.scoringapp.ui.main
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -41,7 +41,8 @@ class MainFragment : Fragment() {
             lifecycleOwner = viewLifecycleOwner
             viewModel = sharedViewModel
             mainFragment = this@MainFragment
-            roundNumber.text = sharedViewModel.roundNumberString.toString()
+            roundNumber.text =
+                "Round number ${sharedViewModel.roundNumber.value?.get(sharedViewModel.roundCounter.value ?: 0) ?: 0} of ${sharedViewModel.roundNumber.value?.last() ?: 0}"
         }
 
         //binding.roundNumber.text = "Round number ${sharedViewModel.roundNumber.value?.get(sharedViewModel.roundCounter.value ?: 0) ?: 0} of ${sharedViewModel.roundNumber.value?.last() ?: 0}"
