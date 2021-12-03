@@ -81,7 +81,7 @@ class PlayerViewModel(private val playerDao: PlayerDao) : ViewModel() {
         if (_firstPlayerId.value == 0) {
             _lastPlayerId.value = numberOfPlayers
         }
-        updateTVs()
+        //updateTVs()
     }
 
 
@@ -101,9 +101,15 @@ class PlayerViewModel(private val playerDao: PlayerDao) : ViewModel() {
             "Round number ${_roundNumber.value?.get(roundCounter.value ?: 0) ?: 0} of ${_roundNumber.value?.last() ?: 0}"
     }
 
+    /*
     private fun updateTVs() {
         _firstPlayerId.value = firstPlayerId.value
         _lastPlayerId.value = lastPlayerId.value
+    }
+    */
+
+    fun setBid() {
+
     }
 
     fun nextState() {

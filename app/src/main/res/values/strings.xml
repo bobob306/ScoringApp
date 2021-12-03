@@ -6,4 +6,17 @@
     <string name="Round_number">Round number of </string>
     <string name="first_player">First player: %s</string>
     <string name="last_player">Last player: %s</string>
+    <string name="player_bid">%s bids</string>
+    <string name="player_trick">%s tricks taken</string>
+    <array name="bids">
+        <item name="zero">Zero</item>
+        <item name="one">One</item>
+        <item name="two">Two</item>
+        <item name="three">Three</item>
+        <item name="four">Four</item>
+        <item name="five">Five</item>
+        <item name="six">Six</item>
+        <item name="seven">Seven</item>
+        <item name="eight">Eight</item>
+    </array>
 </resources>

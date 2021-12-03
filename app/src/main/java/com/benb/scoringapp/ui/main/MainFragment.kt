@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -12,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.benb.scoringapp.PlayerListAdapter
+import com.benb.scoringapp.R
 import com.benb.scoringapp.ScoringApplication
 import com.benb.scoringapp.databinding.MainFragmentBinding
 
@@ -32,6 +34,12 @@ class MainFragment : Fragment() {
     ): View {
         _binding = MainFragmentBinding.inflate(inflater, container, false)
         nextButton()
+
+        val bids = resources.getStringArray(R.array.bids)
+        val arrayAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, bids)
+        binding.autoCompleteTextViewBid.setAdapter(arrayAdapter)
+        binding.autoCompleteTextViewTrick.setAdapter(arrayAdapter)
+
         return binding.root
     }
 
@@ -86,12 +94,26 @@ class MainFragment : Fragment() {
         when (sharedViewModel.state.value) {
             "SetPlayers" -> {
                 binding.addPlayer.isVisible = true
+                binding.playerNameAction.isVisible = false
+                binding.autoCompleteTextViewBid.isVisible = false
+                binding.textInputLayout.isVisible = false
+                binding.textInputLayoutTrick.isVisible = false
+                binding.autoCompleteTextViewTrick.isVisible = false
             }
             "TakeBid" -> {
                 binding.addPlayer.isVisible = false
+                binding.playerNameAction.isVisible = true
+                binding.textInputLayoutTrick.isVisible = false
+                binding.autoCompleteTextViewBid.isVisible = true
+                binding.textInputLayout.isVisible = true
+                binding.autoCompleteTextViewTrick.isVisible = false
             }
             "TakeTricks" -> {
                 binding.addPlayer.isVisible = false
+                binding.autoCompleteTextViewBid.isVisible = false
+                binding.autoCompleteTextViewTrick.isVisible = true
+                binding.textInputLayout.isVisible = false
+                binding.textInputLayoutTrick.isVisible = true
             }
         }
     }
