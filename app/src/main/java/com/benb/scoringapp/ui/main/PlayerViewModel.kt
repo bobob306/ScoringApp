@@ -36,7 +36,27 @@ class PlayerViewModel(private val playerDao: PlayerDao) : ViewModel() {
     val roundCounter: LiveData<Int>
         get() = _roundCounter
 
-    val allPlayers: LiveData<List<Player>> = playerDao.getPlayers().asLiveData()
+    private val _playerList = MutableLiveData<List<Player>>()
+    val playerList: LiveData<List<Player>>
+        get() = _playerList
+
+
+    var allPlayers: LiveData<List<Player>> = playerDao.getPlayers().asLiveData()
+
+    /**
+    if (playerDao.getPlayers().asLiveData().value?.size ?: 0 == 0 ) {
+    playerDao.getPlayers().asLiveData()
+    } else {
+    val player1 = Player(0, "player", 0, 0, 0)
+    liveData { listOf<Player>(player1) }
+    }
+
+     **/
+
+
+    fun updateAllPLayers() {
+        allPlayers = playerDao.getPlayers().asLiveData()
+    }
 
     var numberOfRounds = 0
 
@@ -57,6 +77,7 @@ class PlayerViewModel(private val playerDao: PlayerDao) : ViewModel() {
         viewModelScope.launch {
             playerDao.insert(player)
         }
+        updateAllPLayers()
     }
 
     fun retrievePlayer(id: Int): LiveData<Player> {
@@ -86,9 +107,7 @@ class PlayerViewModel(private val playerDao: PlayerDao) : ViewModel() {
 
 
     private fun getNewPlayerEntry(playerName: String): Player {
-        return Player(
-            playerName = playerName
-        )
+        return Player(playerName = playerName)
     }
 
     fun getPlayerNameList(): LiveData<MutableList<String>> {
@@ -157,8 +176,15 @@ class PlayerViewModel(private val playerDao: PlayerDao) : ViewModel() {
     }
 
     fun deletePlayer(player: Player) {
+        val isItZero = allPlayers.value!!.size.minus(1)
         viewModelScope.launch {
             playerDao.delete(player)
+        }
+        if (isItZero !== 0) {
+            updateAllPLayers()
+        } else {
+            val player1 = Player(0, "player", 0, 0, 0)
+            allPlayers = liveData { listOf<Player>(player1) }
         }
     }
 

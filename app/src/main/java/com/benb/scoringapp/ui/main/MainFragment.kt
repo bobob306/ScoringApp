@@ -93,6 +93,9 @@ class MainFragment : Fragment() {
     fun nextButton() {
         when (sharedViewModel.state.value) {
             "SetPlayers" -> {
+                binding.firstPlayerTV.text = "First player: "
+                binding.lastPlayerTV.text = "Last player: "
+                binding.playerNameAction.text = " bids:"
                 binding.addPlayer.isVisible = true
                 binding.playerNameAction.isVisible = false
                 binding.autoCompleteTextViewBid.isVisible = false
@@ -101,6 +104,12 @@ class MainFragment : Fragment() {
                 binding.autoCompleteTextViewTrick.isVisible = false
             }
             "TakeBid" -> {
+                binding.firstPlayerTV.text =
+                    "First player: ${sharedViewModel.allPlayers.value!![sharedViewModel.firstPlayerId.value!!].playerName}"
+                binding.lastPlayerTV.text =
+                    "Last player: ${sharedViewModel.allPlayers.value!![sharedViewModel.lastPlayerId.value!!].playerName}"
+                binding.playerNameAction.text =
+                    "${sharedViewModel.allPlayers.value!![sharedViewModel.firstPlayerId.value!!].playerName} bids:"
                 binding.addPlayer.isVisible = false
                 binding.playerNameAction.isVisible = true
                 binding.textInputLayoutTrick.isVisible = false
@@ -109,6 +118,12 @@ class MainFragment : Fragment() {
                 binding.autoCompleteTextViewTrick.isVisible = false
             }
             "TakeTricks" -> {
+                binding.firstPlayerTV.text =
+                    "First player: ${sharedViewModel.allPlayers.value!![sharedViewModel.firstPlayerId.value!!].playerName}"
+                binding.lastPlayerTV.text =
+                    "Last player: ${sharedViewModel.allPlayers.value!![sharedViewModel.lastPlayerId.value!!].playerName}"
+                binding.playerNameAction.text =
+                    "${sharedViewModel.allPlayers.value!![sharedViewModel.firstPlayerId.value!!].playerName} bids:"
                 binding.addPlayer.isVisible = false
                 binding.autoCompleteTextViewBid.isVisible = false
                 binding.autoCompleteTextViewTrick.isVisible = true
